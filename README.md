@@ -83,51 +83,13 @@ Garbage in, garbage out. How we prepare data determines if the RAG system fails 
 
 **Objective:** Build a RAG system capable of answering questions about a fictional, newly released product manual that the base LLM knows nothing about.
 
-**Step 1: Setup & Ingestion**
-* *Data:* Create a simple `new_product_manual.txt` with unique facts (e.g., "The FluxRaptor X1 supports 12K resolution only when using the crimson HDMI port.").
-* *Loader:* Use `TextLoader` to bring it into the environment.
-* *Splitter:* Use `RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)`.
+**Refer: [Ask the Knowledge Base](https://git.generalassemb.ly/applied-ai-and-deep-learning-in-action/Lab-4_2-Ask-the-Knowledge-Base)**
 
-**Step 2: Indexing (The Vector Store)**
-* Initialize an embedding model (e.g., `OpenAIEmbeddings` or a local HuggingFace alternative).
-* Create the store: `vectorstore = Chroma.from_documents(documents=splits, embedding=embedding_model)`.
-
-**Step 3: The Retrieval Chain**
-* Create the retriever interface: `retriever = vectorstore.as_retriever(search_type="similarity", search_kwargs={"k": 3})` (Retrieve top 3 most relevant chunks).
-* **The Prompt:**
-    ```python
-    template = """Answer the question based only on the following context:
-    {context}
-    
-    Question: {question}
-    """
-    prompt = ChatPromptTemplate.from_template(template)
-    ```
-* **LCEL Construction:**
-    * We need a way to pipe retrieved documents into the `{context}` slot.
-    * *Standard RAG Chain:*
-        ```python
-        from langchain_core.runnables import RunnablePassthrough
-        from langchain_core.output_parsers import StrOutputParser
-
-        rag_chain = (
-            {"context": retriever, "question": RunnablePassthrough()}
-            | prompt
-            | llm
-            | StrOutputParser()
-        )
-        ```
-
-**Step 4: Testing & Verification**
-* *Test 1 (No RAG):* Ask the raw LLM "What resolution does the FluxRaptor X1 support on the crimson port?". Expect hallucination or "I don't know".
-* *Test 2 (With RAG):* `rag_chain.invoke("What resolution does the FluxRaptor X1 support on the crimson port?")`. Expect the correct, grounded answer.
 
 ## 5. Wrap-Up and Reflection (10 min)
 
 **Reflection Questions:**
-1.  What happens if our `chunk_size` is too small (e.g., 50 characters)? What is lost?
-2.  Why did we use "similarity" search? When might we want "MMR" (Maximal Marginal Relevance) search instead? (Hint: MMR tries to find relevant *but diverse* chunks to avoid repeating the same information 3 times).
-3.  If the RAG system gives a wrong answer, where could the failure be? (It could be the retrieval failed to find the right doc, OR the LLM failed to read the retrieved doc correctly).
+1.  If the RAG system gives a wrong answer, where could the failure be? (It could be the retrieval failed to find the right doc, OR the LLM failed to read the retrieved doc correctly).
 
 ---
 
