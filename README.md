@@ -83,7 +83,7 @@ Garbage in, garbage out. How we prepare data determines if the RAG system fails 
 
 **Objective:** Build a RAG system capable of answering questions about a fictional, newly released product manual that the base LLM knows nothing about.
 
-**Refer: [Ask the Knowledge Base](https://git.generalassemb.ly/applied-ai-and-deep-learning-in-action/Lab-4_2-Ask-the-Knowledge-Base)**
+**Refer: [Ask the Knowledge Base](https://github.com/ga-curriculum/lab-4-2-ask-the-knowledge-base)**
 
 
 ## 5. Wrap-Up and Reflection (10 min)
